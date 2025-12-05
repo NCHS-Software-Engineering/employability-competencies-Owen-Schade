@@ -26,7 +26,16 @@ type EntryFromDB = {
 export default function Thoughts() {
     const [thoughts, setThoughts] = useState<Thought[]>([]);
     const [competencies, setCompetencies] = useState<Competency[]>([]);
+    const [target, setTarget] = useState<number>(0);
     
+    // Delete the entry
+    const deleteEntry = () => {
+        console.log("del");
+        const newThoughts = thoughts
+        newThoughts.splice(target, 1);
+        setThoughts(newThoughts);
+    };
+
     // Load thoughts from the database using our GET route
     useEffect(() => {
         async function loadThoughts() {
@@ -72,14 +81,28 @@ export default function Thoughts() {
                             <div 
                                 key={index}
                                 className="bg-white/20 p-3 rounded-lg shadow-sm">
-                                <p className="text-lg">{thought.text}</p>
-                                <p className="text-sm opacity-80 mt-1">{thought.time}</p>
+                                <div className="flex justify-between">
+                                    <p className="text-lg text-gray-600">{thought.text}</p>
+                                    <div className="flex">
+                                        <button 
+                                            className="bg-gray-100 text-green-500 border-green-500 border-2 rounded-md font-semibold hover:bg-[#000000] transition-colors cursor-pointer"
+                                            >
+                                            Edit
+                                        </button>
+                                        <button 
+                                            className="bg-gray-100 text-[#ff0000] border-red-500 border-2 rounded-md font-semibold hover:bg-[#000000] transition-colors cursor-pointer"
+                                            onClick={() => {setTarget(index); deleteEntry;}}
+                                            >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                                <p className="text-sm opacity-80 mt-1 text-gray-600">{thought.time}</p>
                                 {thought.competencies.length > 0 && (
-                                <p className="text-sm mt-1">
+                                <p className="text-sm mt-1 text-gray-600">
                                     <strong>Competencies: </strong>
                                     {thought.competencies.map((id) =>
                                         competencies.find((c) => c.id === id)?.skill || `#${id}`).join(", ")
-            
                                     }
                                 </p>
                             )}      
